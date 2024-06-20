@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace ConsoleApp3
+namespace DocLocationFinder
 {
     class Program
     {
@@ -16,6 +16,11 @@ namespace ConsoleApp3
             ApplyLicense();
 
             var isValid = ValidateInput(args);
+            
+            if (!isValid)
+            {
+                return;
+            }
 
             var path = args[1];
 
