@@ -8,3 +8,8 @@
 2. Press Ctrl + F5 to compile & run application.
 3. Navigate to bin\Debug directory and execute the below commands 
 
+## .NET Framework app
+[Navigate to Readme.md](net-framework-4.8/README.md)
+
+## .NET Core app
+[Navigate to Readme.md](net-core-6/DocLocationFinder-netcore/README.md)
