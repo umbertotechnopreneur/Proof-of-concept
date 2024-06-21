@@ -2,7 +2,7 @@
   "profiles": {
     "DocLocationFinder-netcore": {
       "commandName": "Project",
-      "commandLineArgs": "wordremove \"C:\\Users\\Umar Abbas\\Downloads\\WW - Huurovereenkomst 1 student PARKTOREN 2_995_210129093250 (2).docx\""
+      "commandLineArgs": "pdfmerge \"C:\\Users\\uabbas\\Downloads\\sample.pdf\" \"C:\\Users\\uabbas\\Downloads\\sample.pdf\" \"C:\\Users\\uabbas\\Downloads\\sample.pdf\""
     }
   }
 }

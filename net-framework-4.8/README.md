@@ -25,3 +25,9 @@ DocLocationFinder wordremove "c:\documents\sample.docx"
 2. Execute command
 DocLocationFinder wordtopdf "c:\documents\sample.docx"
 3. Output coordinates will be shown for each occurance on console screen.
+
+## Merge PDF Files:
+1. Open CMD and navigate to the directory where app is placed.
+2. Execute command
+DocLocationFinder pdfmerge "c:\documents\master.docx" "c:\documents\child1.docx" "c:\documents\child2.docx"
+3. Output coordinates will be shown for each occurance on console screen.

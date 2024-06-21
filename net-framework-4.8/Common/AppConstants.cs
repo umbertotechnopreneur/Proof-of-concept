@@ -13,6 +13,7 @@ namespace DocLocationFinder.Common
             public const string FindWordFileCoordinates = "wordxy";
             public const string ReplaceWordFileText = "wordremove";
             public const string ConvertWordToPdf = "wordtopdf";
+            public const string MergePDFDocuments = "pdfmerge";
 
         }
     }

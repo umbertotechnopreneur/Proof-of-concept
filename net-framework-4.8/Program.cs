@@ -3,8 +3,11 @@ using Aspose.Words.Layout;
 using Aspose.Words.Replacing;
 using DocLocationFinder.Common;
 using DocLocationFinder.Helpers;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DocLocationFinder
@@ -38,6 +41,11 @@ namespace DocLocationFinder
             else if (args[0] == AppConstants.Action.ConvertWordToPdf)
             {
                 Console.WriteLine("Command Action: Converting Word document into PDF document.");
+                Console.WriteLine();
+            }
+            else if (args[0] == AppConstants.Action.MergePDFDocuments)
+            {
+                Console.WriteLine("Command Action: Merging/Appending PDF documents.");
                 Console.WriteLine();
             }
 
@@ -95,7 +103,6 @@ namespace DocLocationFinder
                 Console.WriteLine("No. of tokens found: " + bookmarkCount);
                 Console.WriteLine("------------------------------------");
             }
-
             else if (args[0] == AppConstants.Action.ReplaceWordFileText)
             {
 
@@ -202,7 +209,68 @@ namespace DocLocationFinder
                 doc.Save(outputPdfFilePath, SaveFormat.Pdf);
                 Console.WriteLine($"Output PDF File saved at '{outputPdfFilePath}'");
             }
+            else if (args[0] == AppConstants.Action.MergePDFDocuments)
+            {
+
+
+                if (args.Length < 3)
+                {
+                    Console.WriteLine("Please provide the required commands to proceed.");
+                    Console.WriteLine("DocLocationFinder [param1] [param2]");
+                    Console.WriteLine("[param1] - Action. (i.e pdfmerge)");
+                    Console.WriteLine("[param2] - Master PDF file path. (i.e 'C:\\documents\\master.pdf')");
+                    Console.WriteLine("[param3] - Another PDF file path. (i.e 'C:\\documents\\another.pdf')");
+                    Console.WriteLine("... more paths for PDF files");
+                    isValid = false;
+                }
+                bool allPathsValid = true;
+
+                var pdfPaths = args.Skip(1).ToArray();
+
+                for (int i = 0; i < pdfPaths.Length; i++)
+                {
+                    allPathsValid = allPathsValid && File.Exists(pdfPaths[i]);
+                    if (!allPathsValid)
+                    {
+                        Console.WriteLine("Path not valid: " + pdfPaths[i]);
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (!isValid)
+                {
+                    Console.WriteLine("There were some validation errors so the process could not be started.");
+                    Console.ReadLine();
+                    return;
+                }
+
+                
+
+
+                var nameWithoutExt = Path.GetFileNameWithoutExtension(path);
+                var directory = Path.GetDirectoryName(path);
+
+                var outputPdfFilePath = Path.Combine(directory, nameWithoutExt + "_output" + ".pdf");
+                MergeMultiplePDFIntoSinglePDF(outputPdfFilePath, pdfPaths);
+                Console.WriteLine($"Output PDF File saved at '{outputPdfFilePath}'");
+            }
             Console.ReadLine();
+        }
+
+        private static void MergeMultiplePDFIntoSinglePDF(string outputFilePath, string[] pdfFiles)
+        {
+            PdfDocument outputPDFDocument = new PdfDocument();
+            foreach (string pdfFile in pdfFiles)
+            {
+                PdfDocument inputPDFDocument = PdfReader.Open(pdfFile, PdfDocumentOpenMode.Import);
+                outputPDFDocument.Version = inputPDFDocument.Version;
+                foreach (PdfPage page in inputPDFDocument.Pages)
+                {
+                    outputPDFDocument.AddPage(page);
+                }
+            }
+            outputPDFDocument.Save(outputFilePath);
         }
 
         private static bool ValidateInput(string[] args)
@@ -240,7 +308,8 @@ namespace DocLocationFinder
 
                 if (args[0] != AppConstants.Action.FindWordFileCoordinates
                     && args[0] != AppConstants.Action.ReplaceWordFileText
-                    && args[0] != AppConstants.Action.ConvertWordToPdf)
+                    && args[0] != AppConstants.Action.ConvertWordToPdf
+                    && args[0] != AppConstants.Action.MergePDFDocuments)
                 {
                     Console.WriteLine("The provided action does not look valid.");
                     isValid = false;
@@ -250,7 +319,7 @@ namespace DocLocationFinder
             {
                 Console.WriteLine("Please provide the required commands to proceed.");
                 Console.WriteLine("DocLocationFinder [param1] [param2]");
-                Console.WriteLine("[param1] should be the action. (i.e 'wordxy, wordremove, wordtopdf')");
+                Console.WriteLine("[param1] should be the action. (i.e 'wordxy, wordremove, wordtopdf, pdfmerge')");
                 Console.WriteLine("[param2] should be the file path. (i.e 'C:\\documents\\sample.docx')");
                 Console.WriteLine("");
                 isValid = false;
